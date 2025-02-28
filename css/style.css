@@ -1,0 +1,39 @@
+.main-large-head{
+    font-size: 4.5rem;
+    color:green;
+}
+
+.page-header{
+    color:green
+}
+.admsidebar{
+    margin: 25px;
+    border-right: thin solid grey;
+    border-top: thin solid grey;
+    border-top-right-radius: 8px;
+}
+.question-body{
+    border-left: thin solid grey!important;
+    border-top: thin solid grey!important;
+    border-top-left-radius: 8px!important;
+}
+.page-label{
+    font-size: 14pt;
+    font-weight: 900;
+    color:green;
+}
+textarea{
+    font-size: 14pt;
+}
+
+.menu-link{
+    text-decoration: none;
+    font-size: 14pt;
+    margin-left: 15px;
+    margin-right: 15px;
+    color:green
+}
+.search-box{
+    border-radius: 20px;
+    font-size: 22px;
+}
