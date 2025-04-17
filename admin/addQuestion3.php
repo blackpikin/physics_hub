@@ -4,6 +4,10 @@ $db = new Database();
 $chapters = $db->Fetch('chapters');
 $class = '';
 $chapter ='';
+$state1 = '';
+$state2 = '';
+$state3 = '';
+$state4 = '';
 $instruct = '';
 $picture = '';
 $question = '';
@@ -21,6 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $chapter = $db->FilterInput($_POST['chapter']);
     $instruct = $db->FilterInput($_POST['instruction']);
     $question = $db->FilterInput($_POST['question']);
+    $state1 = $db->FilterInput($_POST['state1']);
+    $state2 = $db->FilterInput($_POST['state2']);
+    $state3 = $db->FilterInput($_POST['state3']);
+    $state4 = $db->FilterInput($_POST['state4']);
     $source = $db->FilterInput($_POST['quesType']);
     $mock = $db->FilterInput($_POST['mock']);
     $year = $db->FilterInput($_POST['year']);
@@ -54,16 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Prepare data for insertion
         $data = [
-            'qtype' => 'simple2',
+            'qtype' => 'cmc',
             'class'=> $class,
             'chapter' => $chapter,
             'instruction' => $instruct,
             'picture' => $picture, // Save the file path
             'question' => $question,
-            'statement1' => '',
-            'statement2' => '',
-            'statement3' => '',
-            'statement4' => '',
+            'statement1' => $state1,
+            'statement2' => $state2,
+            'statement3' => $state3,
+            'statement4' => $state4,
             'qsource' => $source,
             'mock' => $mock,
             'year' => $year,
@@ -82,6 +90,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "<script>alert('Question added successfully')</script>";
             $class = '';
             $chapter ='';
+            $state1 = '';
+            $state2 = '';
+            $state3 = '';
+            $state4 = '';
             $instruct = '';
             $picture = '';
             $question = '';
@@ -100,16 +112,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 <div class="row">
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-        <h4 class="control-panel">Control panel</h4>
+    <h4 class="control-panel">Control panel</h4>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
 
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <br>
-    <h2 class="page-header">Create MCQ questions with picture</h2>
+    <h2 class="page-header">Create CMC questions</h2>
     <br>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
@@ -139,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="Upper Sixth">Upper Sixth</option>
             </select>
         <br>
-            <label class="page-label">Chapter</label>
+        <label class="page-label">Chapter</label>
             <select name="chapter" class="form-control">
                 <option>Choose one</option>
                 <?php 
@@ -159,6 +172,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <br>
         <label class="page-label">Question</label>
         <textarea name="question" class="form-control" rows="6" cols="30" required><?= $question ?></textarea>
+        <br>
+        <label class="page-label">Statement 1</label>
+        <input type="text" class="form-control" name="state1" value="<?= $state1 ?>" required >
+        <label class="page-label">Statement 2</label>
+        <input type="text" class="form-control" name="state2" value="<?= $state2 ?>" required >
+        <label class="page-label">Statement 3</label>
+        <input type="text" class="form-control" name="state3" value="<?= $state3 ?>" required >
+        <label class="page-label">Statement 4</label>
+        <input type="text" class="form-control" name="state4" value="<?= $state4 ?>" required >
         <br>
         <label class="page-label">Question source</label>
         <select name="quesType" class="form-control">

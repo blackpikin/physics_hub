@@ -4,17 +4,16 @@
 
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-    <h2 class="page-header">Register</h2>
+    <h2 class="page-header">Register Staff</h2>
         <form action="" method="post">
             <label class="page-label">Name</label>
             <input type="text" placeholder="Enter your name" name="name" class="form-control">
-            <label class="page-label">Class</label>
-            <select name="class" class="form-control" >
-                <option value="">Choose one</option>
-                <option value="form1">Form 1</option>
-            </select>
+            <label class="page-label">Position</label>
+            <input type="text" placeholder="Enter your position" name="position" class="form-control">
             <label class="page-label">School</label>
             <input type="text" placeholder="Enter your school" name="school" class="form-control">
+            <label class="page-label">Department</label>
+            <input type="text" placeholder="Enter your department" name="department" class="form-control">
             <label class="page-label">Username</label>
             <input type="text" placeholder="Enter your username" name="username" class="form-control">
             <label class="page-label">Password</label>

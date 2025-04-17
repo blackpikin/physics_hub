@@ -1,7 +1,67 @@
-<?php include './include/admHeader.php' ?>
+<?php 
+include './include/admHeader.php'; 
+$db = new Database();
+$chapters = $db->Fetch('chapters');
+$class = '';
+$chapter ='';
+$question = '';
+$source = '';  
+$mock = '';
+$year = '';
+$ans1 = '';
+$ans2 = '';
+$ans3 = '';
+$ans4 = '';
+$corr = '';
+$explanation = '';
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $class = $db->FilterInput($_POST['class']);
+    $chapter = $db->FilterInput($_POST['chapter']);
+    $question = $db->FilterInput($_POST['question']);
+    $source = $db->FilterInput($_POST['quesType']);
+    $mock = $db->FilterInput($_POST['mock']);
+    $year = $db->FilterInput($_POST['year']);
+    $ans1 = $db->FilterInput($_POST['ans1']);
+    $ans2 = $db->FilterInput($_POST['ans2']);
+    $ans3 = $db->FilterInput($_POST['ans3']);
+    $ans4 = $db->FilterInput($_POST['ans4']);
+    $corr = $db->FilterInput($_POST['corr']);
+    $explanation = $db->FilterInput($_POST['explanation']);
+    if(empty($chapter) || empty($question) || empty($source) || empty($mock) || empty($year) || empty($ans1) || empty($ans2) || empty($ans3) || empty($ans4) || empty($corr) || empty($explanation)){
+        echo "<script>alert('All fields are required')</script>";
+    }
+    $data = [
+        'qtype' => 'simple',
+        'chapter'=>$chapter,
+        'instruction'=>'',
+        'picture'=>'',
+        'question'=>$question,
+        'statement1'=>'',
+        'statement2'=>'',
+        'statement3'=>'',
+        'statement4'=>'',
+        'qsource'=>$source,
+        'mock'=>$mock,
+        'year'=>$year,
+        'answer1'=>$ans1,
+        'answer2'=>$ans2,
+        'answer3'=>$ans3,
+        'answer4'=>$ans4,
+        'correct'=>$corr,
+        'explanation'=>$explanation,
+        'connected'=>'no'
+    ];
+    $result = $db->Insert('mcqs', $data);
+    if($result == 'Successful'){
+        echo "<script>alert('Question added successfully')</script>";
+    }else{
+        echo "<script>alert('$result')</script>";
+    }
+}
+?>
 <div class="row">
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-
+    <h4 class="control-panel">Control panel</h4>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
 
@@ -12,7 +72,11 @@
     <br>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-
+    <label class="page-label"> User:</label>
+        <?php 
+            echo $_SESSION['int_phy_username'];
+        ?>
+         <a href="logout.php" class="logout">Logout</a>
     </div>
 </div>
 <div class="row">
@@ -22,13 +86,32 @@
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post">
         <br>
+            <label class="page-label">Class</label>
+            <select name="class" class="form-control">
+                <option value="">Choose one</option>
+                <option value="Form 1">Form 1</option>
+                <option value="Form 2">Form 2</option>
+                <option value="Form 3">Form 3</option>
+                <option value="Form 4">Form 4</option>
+                <option value="Form 5">Form 5</option>
+                <option value="Lower Sixth">Lower Sixth</option>
+                <option value="Upper Sixth">Upper Sixth</option>
+            </select>
+        <br>
             <label class="page-label">Chapter</label>
             <select name="chapter" class="form-control">
-                <option>Choose one</option>
+                <option value="">Choose one</option>
+                <?php 
+                    foreach($chapters as $chap){
+                        ?>
+                            <option value="<?= $chap['chapter'] ?>"><?= $chap['chapter'] ?></option>
+                        <?php
+                    }
+                    ?>
             </select>
             <br>
         <label class="page-label">Question</label>
-        <textarea class="form-control" rows="8" cols="30" required></textarea>
+        <textarea name="question" class="form-control" rows="8" cols="30" required><?= $question ?></textarea>
         <br>
         <label class="page-label">Question source</label>
         <select name="quesType" class="form-control">
@@ -39,7 +122,7 @@
         <div>
             <br>
             <label class="page-label">Mocks</label>
-            <select name="quesType" class="form-control">
+            <select name="mock" class="form-control">
                 <option>Choose one</option>
                 <option>North west</option>
                 <option>South West</option>
@@ -51,10 +134,10 @@
             </div>
             <br>
             <label class="page-label">Year</label>
-            <select name="quesType" class="form-control">
+            <select name="year" class="form-control">
                 <option>Choose one</option>
                 <?php 
-                    for($i = date('Y'); $i >= 1984; $i--){
+                    for($i = date('Y'); $i >= 1990; $i--){
                         ?>
                             <option><?= $i ?></option>
                         <?php
@@ -66,32 +149,33 @@
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <br>
         <label class="page-label">Answer 1</label>
-        <input type="text" class="form-control" name="ans1" required >
+        <input value="<?= $ans1 ?>" type="text" class="form-control" name="ans1" required >
         <br>
         <label class="page-label">Answer 2</label>
-        <input type="text" class="form-control" name="ans2" required >
+        <input value="<?= $ans2 ?>" type="text" class="form-control" name="ans2" required >
         <br>
         <label class="page-label">Answer 3</label>
-        <input type="text" class="form-control" name="ans3" required >
+        <input value="<?= $ans3 ?>" type="text" class="form-control" name="ans3" required >
         <br>
         <label class="page-label">Answer 4</label>
-        <input type="text" class="form-control" name="ans4" required >
+        <input value="<?= $ans4 ?>" type="text" class="form-control" name="ans4" required >
         <br>
         <label class="page-label">Correct answer:</label>&nbsp;&nbsp;&nbsp;
         <input type="radio" name="corr" value="ans1"  >&nbsp;Answer 1
         &nbsp;&nbsp;&nbsp;
         <input type="radio" name="corr" value="ans2" >&nbsp;Answer 2
         &nbsp;&nbsp;&nbsp;
-        <input type="radio" name="corr" value="an3" >&nbsp;Answer 3
+        <br>
+        <input type="radio" name="corr" value="ans3" >&nbsp;Answer 3
         &nbsp;&nbsp;&nbsp;
         <input type="radio" name="corr" value="ans4" >&nbsp;Answer 4
         &nbsp;&nbsp;&nbsp;
         <br>
         <br>
         <label class="page-label">Explanation for correct answer</label>
-        <textarea class="form-control" rows="6" cols="30" required></textarea>
+        <textarea name="explanation" class="form-control" rows="6" cols="30" required><?= $explanation ?></textarea>
         <br>
-        <button type="submit" class="btn btn-success">Submit question</button>
+        <button name="submit" type="submit" class="btn btn-success">Submit question</button>
         </form>
     </div>
     <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>

@@ -1,4 +1,9 @@
-<?php session_start(); ?>
+<?php session_start(); 
+include 'database.php';
+if(!isset($_SESSION['int_phy_username']) || $_SESSION['int_phy_username'] == ''){
+    echo '<script>window.location.href="./login.php"</script>';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
