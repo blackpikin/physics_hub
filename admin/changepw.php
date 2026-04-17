@@ -4,6 +4,8 @@ $curr = $new = $cnew ='';
 $err = 0; $result = '';
 $db = new Database();
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    verify_csrf_or_die();
+
     $curr = $db->FilterInput($_POST['curr']);
     $new = $db->FilterInput($_POST['new']);
     $cnew = $db->FilterInput($_POST['cnew']);
@@ -17,8 +19,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         echo "<script>alert('The new password and the confirmation do not match')</script>";
     }
 
+    if(strlen($new) < 8){
+        $err = 1;
+        echo "<script>alert('Password must be at least 8 characters long')</script>";
+    }
+
     $cpw = $db->FetchAllWithCriteria('admins', ['username'=>$_SESSION['int_phy_username']]);
-    if($cpw[0]['pass'] != $db->HashPassword($curr)){
+    if(empty($cpw) || !$db->VerifyPassword($curr, $cpw[0]['pass'])){
         $err=1;
         echo "<script>alert('Invalid current password')</script>";
     }
@@ -28,7 +35,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $result = $db->Update('admins', $data, ['username'=>$_SESSION['int_phy_username']]);
         if($result == 'Successful'){
             echo "<script>alert('Password changed. You will be logged out so you can log in with the new password')</script>";
-            echo '<script>window.location.href="logout.php"</script>';
+            header('Location: logout.php');
+            exit;
         }else{
             echo "<script>alert('$result')</script>";
         }
@@ -61,6 +69,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     </div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
         <br>
         <label class="page-label">Current password</label>
         <input type="password" class="form-control" name="curr" required >
@@ -80,4 +89,3 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     </div>
     <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
 </div>
-

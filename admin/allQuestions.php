@@ -5,14 +5,21 @@ $years = $db->FetchDistinct('mcqs', 'year', 'ORDER BY year DESC');
 $sources = $db->FetchDistinct('mcqs', 'qsource', 'ORDER BY qsource ASC');
 $chapters = $db->FetchDistinct('mcqs', 'chapter', 'ORDER BY chapter ASC');
 $classes =   $db->FetchDistinct('mcqs', 'class', 'ORDER BY chapter ASC');
+$questions = [];
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    if($_POST['year'] != 'Choose one' && $_POST['exam'] != 'Choose one' && $_POST['chapter'] != 'Choose one' && $_POST['class'] != 'Choose one'){
+    verify_csrf_or_die();
+    $year = $db->FilterInput($_POST['year'] ?? '');
+    $exam = $db->FilterInput($_POST['exam'] ?? '');
+    $chapter = $db->FilterInput($_POST['chapter'] ?? '');
+    $class = $db->FilterInput($_POST['class'] ?? '');
+
+    if($year !== '' && $exam !== '' && $chapter !== '' && $class !== ''){
         $data = [
-            'year'=>$_POST['year'],
-            'qsource'=>$_POST['exam'],
-            'chapter'=>$_POST['chapter'],
-            'class'=> $_POST['class']
+            'year'=>$year,
+            'qsource'=>$exam,
+            'chapter'=>$chapter,
+            'class'=>$class
         ];
         $questions = $db->FetchAllWithCriteria('mcqs', $data);
     }
@@ -47,6 +54,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
         <div class="row">
             <form action="" method="post">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
            <label class="page-label">Year</label>
             <select name="year" class="form-control">

@@ -5,21 +5,32 @@ $fn=$un=$email=$phone = '';
 $pw = ''; $err = 0; $result = '';
 $admins = $db->Fetch('admins');
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    verify_csrf_or_die();
+
     $fn = $db->FilterInput($_POST['fullname']);
     $un = $db->FilterInput($_POST['username']);
     $email = $db->FilterInput($_POST['email']);
     $phone = $db->FilterInput($_POST['phone']);
-    $pw = $db->HashPassword('123456789');
+    $tempPlainPassword = bin2hex(random_bytes(6));
+    $pw = $db->HashPassword($tempPlainPassword);
     if(empty($fn) || empty($un) || empty($email) || empty($phone)){
         $err = 1;
         echo "<script>alert('All fields are required.')</script>";
     }
 
     if($err == 0){
+        $exists = $db->FetchAllWithCriteria('admins', ['username' => $un], 'LIMIT 1');
+        if(!empty($exists)){
+            $err = 1;
+            echo "<script>alert('Username already exists')</script>";
+        }
+    }
+
+    if($err == 0){
         $data = ['fullname' => $fn, 'username'=>$un, 'email'=>$email, 'phone'=>$phone, 'pass'=>$pw];
         $result = $db->Insert('admins', $data);
         if($result == 'Successful'){
-            echo "<script>alert('Admin added successfully')</script>";
+            echo "<script>alert('Admin added successfully. Temporary password: ".$tempPlainPassword."')</script>";
             $admins = $db->Fetch('admins');
             $fn=$un=$email=$phone = '';
             $pw = ''; $err = 0;
@@ -56,6 +67,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     </div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
         <br>
         <label class="page-label">Full name</label>
         <input value="<?= $fn ?>" type="text" class="form-control" name="fullname" required >

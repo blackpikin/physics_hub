@@ -21,6 +21,8 @@ $ans4 = '';
 $corr = '';
 $explanation = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    verify_csrf_or_die();
+
     $class = $db->FilterInput($_POST['class']);
     $chapter = $db->FilterInput($_POST['chapter']);
     $instruct = $db->FilterInput($_POST['instruction']);
@@ -41,15 +43,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Handle the picture upload
     if (isset($_FILES['picture']) && $_FILES['picture']['error'] == 0) {
-        $uploadDir = '../img/'; // Directory to store uploaded images
-        $uploadFile = $uploadDir . basename($_FILES['picture']['name']);
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+        $maxBytes = 2 * 1024 * 1024;
 
-        // Move the uploaded file to the target directory
-        if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploadFile)) {
-            $picture = $uploadFile; // Store the file path
-        } else {
-            echo "<script>alert('Failed to upload the picture.')</script>";
+        $fileExtension = strtolower(pathinfo($_FILES['picture']['name'], PATHINFO_EXTENSION));
+        $fileMime = mime_content_type($_FILES['picture']['tmp_name']);
+
+        if (!in_array($fileExtension, $allowedExtensions, true) || !in_array($fileMime, $allowedMimeTypes, true)) {
+            echo "<script>alert('Invalid image type. Allowed: jpg, jpeg, png, webp')</script>";
             $picture = '';
+        } elseif ((int)$_FILES['picture']['size'] > $maxBytes) {
+            echo "<script>alert('Image is too large. Maximum size is 2MB')</script>";
+            $picture = '';
+        } else {
+            $uploadDir = '../img/';
+            $safeName = 'qimg_'.bin2hex(random_bytes(8)).'.'.$fileExtension;
+            $uploadFile = $uploadDir.$safeName;
+
+            if (move_uploaded_file($_FILES['picture']['tmp_name'], $uploadFile)) {
+                $picture = $uploadFile;
+            } else {
+                echo "<script>alert('Failed to upload the picture.')</script>";
+                $picture = '';
+            }
         }
     } else {
         echo "<script>alert('Please upload a valid picture.')</script>";
@@ -139,6 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
         <br>
             <label class="page-label">Class</label>
             <select name="class" class="form-control">
@@ -168,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <textarea name="instruction" class="form-control" rows="4" cols="30" ><?= $instruct ?></textarea> 
         <br>
         <label class="page-label">Picture</label>
-        <input name="picture" type="file" class="form-control" required>  
+        <input name="picture" type="file" accept=".jpg,.jpeg,.png,.webp" class="form-control" required>
         <br>
         <label class="page-label">Question</label>
         <textarea name="question" class="form-control" rows="6" cols="30" required><?= $question ?></textarea>

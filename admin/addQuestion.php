@@ -15,6 +15,8 @@ $ans4 = '';
 $corr = '';
 $explanation = '';
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    verify_csrf_or_die();
+
     $class = $db->FilterInput($_POST['class']);
     $chapter = $db->FilterInput($_POST['chapter']);
     $question = $db->FilterInput($_POST['question']);
@@ -29,33 +31,34 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $explanation = $db->FilterInput($_POST['explanation']);
     if(empty($chapter) || empty($question) || empty($source) || empty($mock) || empty($year) || empty($ans1) || empty($ans2) || empty($ans3) || empty($ans4) || empty($corr) || empty($explanation)){
         echo "<script>alert('All fields are required')</script>";
-    }
-    $data = [
-        'qtype' => 'simple',
-        'chapter'=>$chapter,
-        'instruction'=>'',
-        'picture'=>'',
-        'question'=>$question,
-        'statement1'=>'',
-        'statement2'=>'',
-        'statement3'=>'',
-        'statement4'=>'',
-        'qsource'=>$source,
-        'mock'=>$mock,
-        'year'=>$year,
-        'answer1'=>$ans1,
-        'answer2'=>$ans2,
-        'answer3'=>$ans3,
-        'answer4'=>$ans4,
-        'correct'=>$corr,
-        'explanation'=>$explanation,
-        'connected'=>'no'
-    ];
-    $result = $db->Insert('mcqs', $data);
-    if($result == 'Successful'){
-        echo "<script>alert('Question added successfully')</script>";
     }else{
-        echo "<script>alert('$result')</script>";
+        $data = [
+            'qtype' => 'simple',
+            'chapter'=>$chapter,
+            'instruction'=>'',
+            'picture'=>'',
+            'question'=>$question,
+            'statement1'=>'',
+            'statement2'=>'',
+            'statement3'=>'',
+            'statement4'=>'',
+            'qsource'=>$source,
+            'mock'=>$mock,
+            'year'=>$year,
+            'answer1'=>$ans1,
+            'answer2'=>$ans2,
+            'answer3'=>$ans3,
+            'answer4'=>$ans4,
+            'correct'=>$corr,
+            'explanation'=>$explanation,
+            'connected'=>'no'
+        ];
+        $result = $db->Insert('mcqs', $data);
+        if($result == 'Successful'){
+            echo "<script>alert('Question added successfully')</script>";
+        }else{
+            echo "<script>alert('$result')</script>";
+        }
     }
 }
 ?>
@@ -85,6 +88,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     </div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
         <br>
             <label class="page-label">Class</label>
             <select name="class" class="form-control">

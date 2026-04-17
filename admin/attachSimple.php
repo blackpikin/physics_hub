@@ -8,7 +8,14 @@ $ans3 = '';
 $ans4 = '';
 $corr = '';
 $explanation = '';
+$qid = isset($_GET['qid']) ? (int)$_GET['qid'] : 0;
+if ($qid <= 0) {
+    http_response_code(400);
+    exit('Invalid question ID');
+}
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    verify_csrf_or_die();
+
     $question = $db->FilterInput($_POST['question']);
     $ans1 = $db->FilterInput($_POST['ans1']);
     $ans2 = $db->FilterInput($_POST['ans2']);
@@ -23,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Prepare data for insertion
         $data = [
-            'qid' => $_GET['qid'],
+            'qid' => $qid,
             'question' => $question,
             'statement1' => '',
             'statement2' => '',
@@ -80,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
         <br>
         <label class="page-label">Question</label>
         <textarea name="question" class="form-control" rows="8" cols="30" required><?= $question ?></textarea>

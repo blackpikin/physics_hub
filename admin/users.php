@@ -38,9 +38,6 @@ $users = $db->Fetch('users');
                 <td>Username</td>
                 <td>Class</td>
                 <td>School</td>
-                <td>Email</td>
-                <td>Phone</td>
-                <td>User type</td>
                 <td>Picture</td>
                 <td>Actions</td>
             </tr>
@@ -50,8 +47,11 @@ $users = $db->Fetch('users');
                         ?>
                          <tr>
                             <td><?= $a['fullname'] ?></td>
-                            <td><?= $a['email'] ?></td>
-                            <td><?= $a['phone'] ?></td>
+                            <td><?= $a['username'] ?></td>
+                            <td><?= $a['class'] ?></td>
+                            <td><?= $a['school'] ?></td>
+                            <td></td>
+                            <td><button title="Block user" class="btn btn-danger fa fa-stop"></button></td>
                          </tr>
                         <?php
                     }

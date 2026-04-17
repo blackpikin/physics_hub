@@ -7,7 +7,7 @@
 
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-    <h6 class="main-large-head">The <sup>i</sup>nteractive Physics Hub</h6>
+    <h6 class="main-large-head">The <sup>i</sup>nteractive M<sub>C</sub>Q Hub</h6>
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
     <label class="page-label"> User:</label>

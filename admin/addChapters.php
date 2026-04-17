@@ -4,25 +4,28 @@ $db = new Database();
 $chapter ='';
 $subject = '';
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    verify_csrf_or_die();
+
     $subject = $db->FilterInput($_POST['subject']);
     $chapter = $db->FilterInput($_POST['chapter']);
     if(empty($chapter) || empty($subject)){
         echo "<script>alert('All fields are required')</script>";
-    }
-    $is_exist = $db->FetchAllWithCriteria('chapters', ['chapter' => $chapter, 'subject'=>$subject]);
-    if(empty($is_exist)){
-        $data = [
-            'subject' => $subject,
-            'chapter'=>$chapter,
-        ];
-        $result = $db->Insert('chapters', $data);
-        if($result == 'Successful'){
-            echo "<script>alert('Chapter added successfully')</script>";
+    } else {
+        $is_exist = $db->FetchAllWithCriteria('chapters', ['chapter' => $chapter, 'subject'=>$subject]);
+        if(empty($is_exist)){
+            $data = [
+                'subject' => $subject,
+                'chapter'=>$chapter,
+            ];
+            $result = $db->Insert('chapters', $data);
+            if($result == 'Successful'){
+                echo "<script>alert('Chapter added successfully')</script>";
+            }else{
+                echo "<script>alert('$result')</script>";
+            }
         }else{
-            echo "<script>alert('$result')</script>";
+            echo "<script>alert('Chapter already existing in records')</script>";
         }
-    }else{
-        echo "<script>alert('Chapter already existing in records')</script>";
     }
 
 
@@ -55,10 +58,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     </div>
     <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
         <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
         <br>
             <label class="page-label">Subject</label>
             <select name="subject" class="form-control">
                 <option>Choose one</option>
+                <option>Biology</option>
+                <option>Chemistry</option>
+                <option>Computer Science</option>
+                <option>Mathematics</option>
                 <option>Physics</option>
             </select>
             <br>

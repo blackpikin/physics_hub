@@ -21,7 +21,7 @@ if (!headers_sent()) {
     header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'");
 }
 
-include 'database.php';
+include '../admin/include/database.php';
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -42,12 +42,7 @@ if (!function_exists('verify_csrf_or_die')) {
         }
     }
 }
-
-if(!isset($_SESSION['int_phy_username']) || $_SESSION['int_phy_username'] == ''){
-    header('Location: ./login.php');
-    exit;
-}
-?>
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,4 +55,48 @@ if(!isset($_SESSION['int_phy_username']) || $_SESSION['int_phy_username'] == '')
     <title>Interactive Physics Hub</title>
 </head>
 <body>
-    
+<div class="row">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        <img src="../img/logo.jpg" alt="" class="logo" >
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+
+    </div>
+    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+        <br>
+        <?php 
+            if(!isset($_SESSION['usern']) || $_SESSION['usern'] == ''){
+
+            }else{
+                if($_SESSION['role'] == 'staff'){
+                    ?>
+                        <a class="menu-link" href="create.php" >Create a test</a>
+                    <?php
+                }
+            }
+        ?>
+        <a class="menu-link" href="take.php" >Take a test</a>
+        <a class="menu-link" href="videos.php" >Videos</a>
+        <a class="menu-link" href="articles.php" >Articles</a>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+        <?php 
+            if(!isset($_SESSION['usern']) || $_SESSION['usern'] == ''){
+                ?>
+                    <a class="menu-link" href="./login.php" >Login</a>
+                    <a class="menu-link" href="./registerStud.php" >Sign up</a>
+                <?php
+            }else{
+                ?>
+                <span class="menu-link" ><?= $_SESSION['usern']  ?></span>
+                <a href="logout.php" class="logout">Logout</a>
+            <?php
+            }
+        ?>
+        
+    </div>
+</div>
+<hr>
